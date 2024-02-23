@@ -1,56 +1,56 @@
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
 // const Home = () => {
-//   const [data, setData] = useState([]);
-//   const [loader,setLoader] = useState(false)
-//   //   const fetchData = async () => {
-//   //     await axios
-//   //       .get("https://hub.dummyapis.com/employee?noofRecords=1000&idStarts=1")
-//   //       .then((res) => {
-//   //         setData(res.data);
-//   //       });
-//   //   };
+// const [data, setData] = useState([]);
+// const [loader,setLoader] = useState(false)
+// // const fetchData = async () => {
+// // await axios
+// // .get("https://hub.dummyapis.com/employee?noofRecords=1000&idStarts=1")
+// // .then((res) => {
+// // setData(res.data);
+// // });
+// // };
 
-//   const fetchData = async () => {
-//     setLoader(true)
-//     try {
-//       const res = await axios.get(
-//         "https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1"
-//       );
-//       // console.log(res);
-//       setData(res.data);
-//       setLoader(false)
-//     } catch (error) {
-//       console.log(error);
-//       setLoader(false)
-//     }finally{
-//         setLoader(false)
-//     }
-//   };
+// const fetchData = async () => {
+// setLoader(true)
+// try {
+// const res = await axios.get(
+// "https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1"
+// );
+// // console.log(res);
+// setData(res.data);
+// setLoader(false)
+// } catch (error) {
+// console.log(error);
+// setLoader(false)
+// }finally{
+// setLoader(false)
+// }
+// };
 
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
+// useEffect(() => {
+// fetchData();
+// }, []);
 
-//   console.log("1");
-//   setTimeout(() => {
-//     console.log("2");
-//   }, 1000);
-//   console.log("3");
-//   return (
-//     <>
-//       <ul>
-//       {loader ? "Load Data": <> {data.map((item) => {
-//           return (
-//             <>
-//               <li>{item.firstName}</li>
-//             </>
-//           );
-//         })}</>}
+// console.log("1");
+// setTimeout(() => {
+// console.log("2");
+// }, 1000);
+// console.log("3");
+// return (
+// <>
+// <ul>
+// {loader ? "Load Data": <> {data.map((item) => {
+// return (
+// <>
+// <li>{item.firstName}</li>
+// </>
+// );
+// })}</>}
 
-//       </ul>
-//     </>
-//   );
+// </ul>
+// </>
+// );
 // };
 
 // export default Home;
@@ -65,11 +65,19 @@ const Home = () => {
   const [newCity, setNewCity] = useState();
   const [newState, setNewState] = useState();
   const [editIndex, setEditIndex] = useState(null);
-  const [addState, setState] = useState([]);
+  const [addState, setAddState] = useState();
+  const [getState, setGetState] = useState([]);
 
-  console.log(cities);
+  console.log(getState);
 
-  // add and update city
+  // handle add state data one 
+
+  const handleStateAdd = () => {
+    setGetState([...getState, { id: Date.now(), nameState: addState?.trim() }]);
+    setAddState("")
+  };
+
+  // add and update data
 
   const handleAddData = () => {
     if (editIndex !== null) {
@@ -84,7 +92,11 @@ const Home = () => {
     } else {
       setCities([
         ...cities,
-        { id: Date.now(), name: newCity.trim(), state: newState.trim() },
+        {
+          id: Date.now(),
+          name: newCity.trim(),
+          state: newState.trim(),
+        },
       ]);
     }
 
@@ -101,12 +113,6 @@ const Home = () => {
     setEditIndex(null);
   };
 
-  //   const handleDelete  = (id) =>{
-  //     const updateCities = [...cities]
-  //     updateCities.splice(id, 1)
-  //     setCities(updateCities)
-  //      setEditIndex(null)
-  // }
   const handleEditCity = (id) => {
     const cityEdit = cities[id];
     setNewCity(cityEdit.name);
@@ -127,19 +133,40 @@ const Home = () => {
   return (
     <>
       <h1>React JS Test</h1>
+
       <label htmlFor="">State</label>
       <input
         type="text"
-        value={newCity}
-        onChange={(e) => setNewCity(e.target.value)}
+        value={addState}
+        onChange={(e) => setAddState(e.target.value)}
       />
+      <button onClick={handleStateAdd}>Add state </button>
 
+      <div>
+        <label htmlFor="">choose state name</label>
+        <select
+          name=""
+          id=""
+          style={{ width: "200px" }}
+          onChange={(e) => setNewState(e.target.value)}
+          value={newState}
+        >
+          <option value="">Choose State Name</option>
+          {getState?.map((ele) => {
+            return (
+              <>
+                <option value={ele.stateName}>{ele.nameState}</option>
+              </>
+            );
+          })}
+        </select>
+      </div>
 
       <label htmlFor="">City</label>
       <input
         type="text"
-        value={newState}
-        onChange={(e) => setNewState(e.target.value)}
+        value={newCity}
+        onChange={(e) => setNewCity(e.target.value)}
       />
 
       <button onClick={handleAddData}>
@@ -177,17 +204,17 @@ const Home = () => {
           })}
         </tbody>
 
-          {Array.from({ length: Math.ceil(cities.length / itemPerPage) }).map(
-            (_, index) => {
-              return (
-                <>
-                  <button key={index} onClick={() => paginate(index + 1)}>
-                    {index + 1}
-                  </button>
-                </>
-              );
-            }
-          )}
+        {Array.from({ length: Math.ceil(cities.length / itemPerPage) }).map(
+          (_, index) => {
+            return (
+              <>
+                <button key={index} onClick={() => paginate(index + 1)}>
+                  {index + 1}
+                </button>
+              </>
+            );
+          }
+        )}
       </table>
     </>
   );
